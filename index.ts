@@ -1,10 +1,9 @@
 import express from 'express';
 const app = express();
+import { startServer, router, logging } from './app';
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
+logging();
+router();
+startServer();
 
-app.listen(3100, () => {
-    console.log('Magazine hub - backend listening on port 3100!');
-});
+export { app };
