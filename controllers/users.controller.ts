@@ -13,6 +13,22 @@ export default {
 		const user = await User.findByPk(req.params.id, { attributes: { exclude: ['password'] } })
 		res.send(user)
     },
+
+    async me(req: any, res: Response) {
+		const user = await User.findByPk(req.user.id, { attributes: { exclude: ['password'] } })
+		res.send(user)
+	},
+
+	async login(req: Request, res: Response) {
+		const user = await User.findOne({ where: { email: req.body.email.toLowerCase() } })
+
+		let validPass: boolean | undefined
+		if (user) validPass = await user.verifyPass(req.body.password)
+		if (!user || !validPass) return res.status(400).json('Invalid Email or Password!')
+
+		const token = await user.getJwt()
+		res.header('x-auth-token', token).send(user.dropPwd())
+	},
 	
     async create(req: Request, res: Response) {
 		// check if email exist

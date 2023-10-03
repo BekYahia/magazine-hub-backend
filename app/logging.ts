@@ -1,4 +1,5 @@
 import winston from 'winston'
+import config from '../config'
 
 export function logging(): void {
 
@@ -17,6 +18,9 @@ export function logging(): void {
 		level: 'silly',
 		handleExceptions: true,
 	}))
+
+	// Check JWT key
+	if(!config.jwt_key) new Error ('Please Set a JWT key in you environment.')	
 
 	// Handle uncaughtException
 	process.on("uncaughtException", ex => {

@@ -1,6 +1,8 @@
 import { Model, DataTypes, Optional } from 'sequelize'
 import { sequelize }  from '.'
 import bcrypt from 'bcryptjs'
+import jwt  from 'jsonwebtoken'
+import config from '../config'
 
 // We recommend you declare an interface for the attributes, for stricter typechecking
 type roleType = 'user' | 'admin'
@@ -81,6 +83,15 @@ User.prototype.verifyPass = function (password) {
 User.prototype.dropPwd = function() {
 	const { password, ...rest } = this.dataValues
 	return rest
+}
+
+User.prototype.getJwt = function () {
+	const payload = {
+		id: this.id,
+		email: this.email,
+		role: this.role
+	}
+	return jwt.sign(payload, config.jwt_key as string, { expiresIn: '1d' })
 }
 
 export default User
