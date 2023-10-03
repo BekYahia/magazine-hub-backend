@@ -1,5 +1,6 @@
 import { Model, DataTypes, Optional } from 'sequelize'
 import { sequelize }  from '.'
+import bcrypt from 'bcryptjs'
 
 // We recommend you declare an interface for the attributes, for stricter typechecking
 type roleType = 'user' | 'admin'
@@ -28,7 +29,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
 
 	verifyPass!: (password: string) => Promise<boolean>
 	getJwt!: () => string
-	// dataValues!: () => User
+	dataValues!: UserAttributes
 	dropPwd!: () => Partial<User>
 }
 
@@ -52,5 +53,34 @@ User.init (
 		sequelize
 	}
 )
+
+/* built-in Props */
+User.beforeCreate(async (user, options) => {
+	user.password = await User.hashPwd(user.password)
+	user.email = user.email.toLowerCase()
+})
+
+User.beforeUpdate(async (user: any, options) => {
+	user.email = user.email.toLowerCase()
+
+	if (user._previousDataValues.password != user.password) {
+		user.password = await User.hashPwd(user.password)
+	}
+})
+
+/* custom Props */
+//at class level aka static
+User.hashPwd = async(password) => {
+	return bcrypt.hash(password, 12)
+}
+// at instance level cuz i need access to other props
+User.prototype.verifyPass = function (password) {
+	return bcrypt.compare(password, this.password)
+}
+
+User.prototype.dropPwd = function() {
+	const { password, ...rest } = this.dataValues
+	return rest
+}
 
 export default User
