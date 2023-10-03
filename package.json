@@ -7,6 +7,7 @@
     "dev": "nodemon index.ts",
     "build": "rm -rf dist && tsc",
     "db": "DEV_DB_HOSTNAME=127.0.0.1 sequelize db:drop && DEV_DB_HOSTNAME=127.0.0.1 sequelize db:create && DEV_DB_HOSTNAME=127.0.0.1 sequelize db:migrate",
+    "migrate": "DEV_DB_HOSTNAME=127.0.0.1 sequelize db:migrate",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
