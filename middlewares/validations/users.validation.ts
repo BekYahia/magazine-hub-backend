@@ -40,7 +40,7 @@ export = {
 			role: Joi.string().trim()
 		})
 
-		const { error } = schema.validate({ ...req.body, ...req.params }, { abortEarly: false, allowUnknown: true })
+		const { error } = schema.validate({ ...req.body, ...req.params }, { abortEarly: false })
 		if (error) return res.status(400).send(error)
 
 		next()
