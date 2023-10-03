@@ -41,7 +41,7 @@ export default {
     },
 
    async update(req: any, res: Response) {
-	   //is users 
+	   //is valid user?
 	   let isUser = await User.findByPk(req.params.id)
 	   if(!isUser) return res.status(404).json('No user found')
 
