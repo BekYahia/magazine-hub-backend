@@ -9,3 +9,7 @@ export function startServer(): void {
 		console.log(`Magazine hub - backend listening on port: ${config.port}`)
 	})
 }
+
+export function closeServer(): void {
+	srv.close()
+}

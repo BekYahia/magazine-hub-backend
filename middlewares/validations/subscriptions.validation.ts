@@ -21,7 +21,7 @@ export = {
 			MagazineId: Joi.number().required(),
 			start_date: Joi.date().required(),
 			end_date: Joi.date().required(),
-            is_active: Joi.boolean().required(),
+            // is_active: Joi.boolean().required(),
             payment_status: Joi.string().trim(),
 		})
 
