@@ -20,7 +20,7 @@ services:
     restart: always
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: DEV_DB_PASSWORD
+      MYSQL_ROOT_PASSWORD: ${DEV_DB_PASSWORD}
     ports:
       - "3306:3306"
     # volumes:

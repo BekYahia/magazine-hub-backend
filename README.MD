@@ -1,8 +1,5 @@
 ## Magazine Hub (Backend) - A Magazine Subscription Management System
 
-### ISSUE:
-I ran into an issue within the last hours, regards docker networks and services, I wasn't able to access the db service by the name in docker compose file, I will file a quick solution and update the repo ASAP.
-
  - [Frontend Repo](https://github.com/BekYahia/magazine-hub-frontend)
 ## Installation And Running:
 

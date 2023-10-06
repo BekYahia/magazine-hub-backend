@@ -9,7 +9,7 @@
     "db": "DEV_DB_HOSTNAME=127.0.0.1 sequelize db:drop && DEV_DB_HOSTNAME=127.0.0.1 sequelize db:create && DEV_DB_HOSTNAME=127.0.0.1 sequelize db:migrate",
     "migrate": "DEV_DB_HOSTNAME=127.0.0.1 sequelize db:migrate",
     "pretest": "cross-env NODE_ENV=test TEST_DB_HOSTNAME=127.0.0.1 sequelize db:drop && cross-env NODE_ENV=test TEST_DB_HOSTNAME=127.0.0.1 sequelize db:create && cross-env NODE_ENV=test TEST_DB_HOSTNAME=127.0.0.1 sequelize db:migrate",
-    "test": "jest --watchAll --verbose --detectOpenHandles",
+    "test": "cross-env NODE_ENV=test jest --watchAll --verbose --detectOpenHandles",
     "initTest": "ts-jest config:init"
   },
   "keywords": [],
