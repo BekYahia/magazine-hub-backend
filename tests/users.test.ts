@@ -48,7 +48,7 @@ describe('Users', () => {
 		it('create new user', async () => {
 			const res = await request(app).post('/api/users').send(user)
 
-			expect(res.status).toBe(200)
+			expect(res.status).toBe(201)
 			expect(res.body.name).toBe('John Doe')
 		})
 
@@ -89,6 +89,12 @@ describe('Users', () => {
 
 			expect(res.status).toBe(200)
 			expect(res.body.name).toBe('John Doe')
+		})
+
+		it('should\'t get user, no user found', async () => {
+			const res = await request(app).get('/api/users/9898998989').set('x-auth-token', token)
+			expect(res.status).toBe(404)
+			expect(res.body).toBe('No user found')
 		})
 
 		it('should\'t get user, invalid id', async () => {
@@ -161,8 +167,7 @@ describe('Users', () => {
 			const usr = await request(app).post('/api/users').send(user)
 			const res = await request(app).delete(`/api/users/${usr.body.id}`).set('x-auth-token', token)
 
-			expect(res.status).toBe(200)
-			expect(res.body.del).toBe(1)
+			expect(res.status).toBe(204)
 		})
 
 		it('should\'t delete user, invalid id', async () => {

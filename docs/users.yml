@@ -1,0 +1,247 @@
+openapi: 3.0.3
+info:
+  title: User Management API
+  version: 1.0.0
+  description: Express API for managing users
+tags:
+  - name: Users
+    description: User management
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        role:
+          type: string
+          enum: [user, admin]
+          default: user
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - name
+        - email
+        - password
+      example:
+        id: 123
+        name: John Doe
+        email: john.doe@example.com
+        password: password123
+        role: user
+        createdAt: 2023-10-01T00:00:00.000Z
+        updatedAt: 2023-10-01T00:00:00.000Z
+    UserCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        role:
+          type: string
+          enum: [user, admin]
+          default: user
+      required:
+        - name
+        - email
+        - password
+      example:
+        name: John Doe
+        email: john.doe@example.com
+        password: password123
+    UserLogin:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required:
+        - email
+        - password
+      example:
+        email: john.doe@example.com
+        password: password123
+    UserUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        role:
+          type: string
+          enum: [user, admin]
+          default: user
+      example:
+        name: John Doe
+        email: john.doe@example.com
+        password: password123
+  securitySchemes:
+    AuthToken:
+      type: apiKey
+      name: x-auth-token
+      in: header
+      description: 'JWT token, obtained from /users/login as a response header (x-auth-token)'
+paths:
+  /users:
+    post:
+      summary: Create a new user
+      tags: [Users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Email already been used!
+    get:
+      summary: Get all users
+      tags: [Users]
+      security:
+        - AuthToken: []
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  /users/login:
+    post:
+      summary: Login with email and password
+      tags: [Users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: Login successful
+          headers:
+            x-auth-token:
+              description: Authentication token
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid Email or Password!
+  /users/me:
+    get:
+      summary: Get the current user
+      tags: [Users]
+      security:
+        - AuthToken: []
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{id}:
+    get:
+      summary: Get a user by ID
+      tags: [Users]
+      security:
+        - AuthToken: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: User ID
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: No user found
+    put:
+      summary: Update a user by ID
+      tags: [Users]
+      security:
+        - AuthToken: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: User ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Email already been used!
+        '404':
+          description: No user found
+    delete:
+      summary: Delete a user by ID
+      tags: [Users]
+      security:
+        - AuthToken: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: User ID
+      responses:
+        '204':
+          description: User deleted successfully
+        '404':
+          description: No user found

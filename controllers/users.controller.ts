@@ -11,6 +11,7 @@ export default {
 
     async byId(req: Request, res: Response) {
 		const user = await User.findByPk(req.params.id, { attributes: { exclude: ['password'] } })
+		if(!user) return res.status(404).json('No user found')
 		res.send(user)
     },
 
@@ -37,7 +38,7 @@ export default {
 
 		//save
 		const user = await User.create(req.body)
-		res.send(user.dropPwd())
+		res.status(201).send(user.dropPwd())
     },
 
    async update(req: any, res: Response) {
@@ -68,7 +69,8 @@ export default {
 
 	async delete(req: Request, res: Response) {
 		const del = await User.destroy({ where: { id: req.params.id } })
-		res.send({ del })
+		if (!del) return res.status(404).json('No user found')
+		res.status(204).send({ del })
 	},
 
 }

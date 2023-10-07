@@ -31,10 +31,16 @@ docker-compose up backend
 
 - Finally, Migrate the database
 ```bash
-npm run db
+npm run db:dev
+```
+
+## Testing:
+- run the tests
+```bash
+npm run test
 ```
 ## TODO:
-- [] implement Stripe for payments
-- [] set a corn job to simulate the subscription expiration but sending the a magazine monthly depending on the `publication_date`
-- [] Swagger (in progress)
-- [] Permissions and Grafana for monitoring
+- [ ] implement Stripe for payments
+- [ ] set a corn job to simulate the subscription expiration but sending the a magazine monthly depending on the `publication_date`
+- [ ] Swagger (in progress)
+- [ ] Permissions and Grafana for monitoring
