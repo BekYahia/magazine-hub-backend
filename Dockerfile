@@ -19,6 +19,6 @@ COPY package.json package-lock.json ./
 
 RUN npm i --production
 
-COPY --from=development /usr/src/apps/dist ./dist
+COPY --from=development /usr/src/app/dist ./dist
 
 CMD ["node", "dist/index.js"]
