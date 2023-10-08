@@ -7,8 +7,10 @@ export default {
 
     async all(req: Request, res: Response) {
         
+        //parse boolean
         const where = req.query
-
+        if (where?.is_active !== undefined) where.is_active = JSON.parse(where.is_active as string)    
+    
         const magazines = await Subscription.findAll({ order: [['id', 'DESC']], include: [
             { model: User, attributes: ['id', 'name', 'email'] },
             { model: Magazine, attributes: ['id', 'title', 'is_active'] },
@@ -20,10 +22,20 @@ export default {
 
     async byId(req: Request, res: Response) {
 		const magazine = await Subscription.findByPk(req.params.id)
+        if(!magazine) return res.status(404).json('No subscription found')
 		res.send(magazine)
     },
 	
     async create(req: Request, res: Response) {
+
+        // check if user exist
+        const isUser = await User.findByPk(req.body.UserId)
+        if (!isUser) return res.status(400).json('No user found with this id')
+
+        // check if magazine exist
+        const isMagazine = await Magazine.findByPk(req.body.MagazineId)
+        if (!isMagazine) return res.status(400).json('No Magazine found with this id')
+
 		// is active subscription
 		const isSubscription = await Subscription.findOne({ where: {
             UserId: req.body.UserId,
@@ -39,7 +51,7 @@ export default {
             //- success? update {payment_status: 'paid', is_active: true}
             //- notify user via email
 
-		res.send(magazine)
+		res.status(201).send(magazine)
     },
 
    async update(req: any, res: Response) {
@@ -67,7 +79,7 @@ export default {
 
 		//update
 		let magazine = await Subscription.update({ is_active: false }, {
-			where: { id: req.params.id },
+			where: { id: isSubscription.id },
 			individualHooks: true
 		})
 		//@ts-ignore

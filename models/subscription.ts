@@ -39,7 +39,10 @@ Subscription.init (
         MagazineId: DataTypes.NUMBER,
         start_date: DataTypes.DATE,
         end_date: DataTypes.DATE,
-		is_active: DataTypes.BOOLEAN,
+		is_active: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
         payment_status: {
             type: DataTypes.STRING,
             defaultValue: 'pending',

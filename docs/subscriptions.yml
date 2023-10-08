@@ -1,0 +1,262 @@
+openapi: 3.0.3
+info:
+  title: Subscription Management API
+  version: 1.0.0
+  description: Express API for managing users
+tags:
+  - name: Subscriptions
+    description: Subscription management
+components:
+  schemas:
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: number
+        UserId:
+          type: number
+        MagazineId:
+          type: number
+        payment_status:
+          type: string
+          default: pending
+        is_active:
+          type: boolean
+          default: false
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        User:
+          type: object
+          properties:
+            id:
+              type: number
+            name:
+              type: string
+            email:
+              type: string
+        Magazine:
+          type: object
+          properties:
+            id:
+              type: number
+            title:
+              type: string
+            is_active:
+              type: boolean
+              default: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - UserId
+        - MagazineId
+        - start_date
+        - end_date
+      example:
+        id: 123
+        UserId: 1
+        MagazineId: 1
+        payment_status: pending
+        is_active: false
+        start_date: 2023-10-01
+        end_date: 2023-11-01
+        User: 
+          id: 1
+          name: John Doe
+          email: john.doe@example.com
+        Magazine:
+          id: 1
+          title: National Geographic
+          is_active: true
+        createdAt: 2023-10-01T00:00:00.000Z
+        updatedAt: 2023-10-01T00:00:00.000Z
+    SubscriptionCreate:
+      type: object
+      properties:
+        UserId:
+          type: number
+        MagazineId:
+          type: number
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+      required:
+        - UserId
+        - MagazineId
+        - start_date
+        - end_date
+      example:
+        UserId: 1
+        MagazineId: 1
+        start_date: 2023-11-01
+        end_date: 2023-12-01
+    SubscriptionUpdate:
+      type: object
+      properties:
+        is_active:
+          type: boolean
+          default: false
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+      example:
+        is_active: false
+        start_date: 2023-11-01
+        end_date: 2023-12-01
+    SubscriptionCancel:
+      type: object
+      properties:
+        UserId:
+          type: number
+        MagazineId:
+          type: number
+      required:
+        - UserId
+        - MagazineId
+      example:
+        UserId: 1
+        MagazineId: 1
+paths:
+  /subscriptions:
+    post:
+      summary: Create a subscription
+      tags: [Subscriptions]
+      description: Create a subscription
+      security:
+        - AuthToken: []
+      requestBody:
+        description: Subscription object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionCreate'
+      responses:
+        '201':
+          description: Subscription created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '400':
+          description: |-
+            - No Magazine found with this id
+            - No User found with this id
+            - You already have an active subscription for this magazine
+    get:
+      summary: Get all subscriptions
+      tags: [Subscriptions]
+      description: Get all subscriptions, or filter by UserId, MagazineId, payment_status, is_active
+      security:
+        - AuthToken: []
+      parameters:
+        - in: query
+          name: UserId
+          schema:
+            type: number
+          description: Filter by UserId
+        - in: query
+          name: MagazineId
+          schema:
+            type: number
+          description: Filter by MagazineId
+        - in: query
+          name: payment_status
+          schema:
+            type: string
+          description: Filter by payment_status
+        - in: query
+          name: is_active
+          schema:
+            type: boolean
+          description: Filter by is_active
+      responses:
+        '200':
+          description: List of subscriptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subscription'
+  /subscriptions/cancel:
+    post:
+      summary: Cancel a subscription
+      tags: [Subscriptions]
+      description: Cancel a subscription [user must have an active subscription]
+      security:
+        - AuthToken: []
+      requestBody:
+        description: Subscription object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionCancel'
+      responses:
+        '200':
+          description: Subscription cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '400':
+          description: you don\'t have an active subscription
+  /subscriptions/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: number
+        description: Subscription ID
+    get:
+      summary: Get a subscription by ID
+      tags: [Subscriptions]
+      description: Get a subscription by ID
+      security:
+        - AuthToken: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '404':
+          description: No subscription found'
+    put:
+      summary: Update a subscription by ID
+      tags: [Subscriptions]
+      description: Update a subscription by ID
+      security:
+        - AuthToken: []
+      requestBody:
+        description: Subscription object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionUpdate'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '404':
+          description: No subscription found'

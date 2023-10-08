@@ -22,7 +22,7 @@ export = {
 			start_date: Joi.date().required(),
 			end_date: Joi.date().required(),
             // is_active: Joi.boolean().required(),
-            payment_status: Joi.string().trim(),
+            // payment_status: Joi.string().trim(),
 		})
 
 		const { error } = schema.validate(req.body, { abortEarly: false})
