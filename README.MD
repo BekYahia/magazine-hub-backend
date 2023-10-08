@@ -1,46 +1,71 @@
 ## Magazine Hub (Backend) - A Magazine Subscription Management System
 
  - [Frontend Repo](https://github.com/BekYahia/magazine-hub-frontend)
-## Installation And Running:
 
-- install dependencies
-```bash
-npm i
-```
+# Table of Contents:
+- [Installation](#installation)
+- [Running](#running)
+- [Testing](#testing)
+- [Documentation](#documentation)
+- [TODO](#todo)
 
-- rename .env.sample to .env
-```bash
-cp .env.sample .env
-```
-- Note that the default port is 3100, if you change it, make sure to change it in the frontend as well, in `vite.config.js` > `server.proxy`
+## Installation:
 
-- make sure you have docker installed
+1) **Install Dependencies:**
+    ```bash
+    npm i
+    ```
 
-- run the DB and Adminer
-```bash
-docker-compose up db adminer
-```
-- access adminer on `localhost:8080` and login with the credentials in the .env file
+1) **Rename .env.sample to .env**
+    ```bash
+    cp .env.sample .env
+    ```
 
-- you add `-d` for detached mode `docker-compose up db adminer -d`
+    Copy the provided .env.sample file and rename it to .env for configuration.
 
-- run the backend
-```bash
-docker-compose up backend
-```
+1) **Configure Port**
+    
+    The default port is `3100`. If you change it, update the frontend configuration in `vite.config.js` > `server.proxy`
+        - The Proxy in the frontend is a way to avoid CORS issues in development.
 
-- Finally, Migrate the database
-```bash
-npm run db:dev
-```
+## Running:
+
+1) **Database**
+    
+    Run **DB (MysQL)** and **Adminer** which is a DB Management Tool
+    
+    ```bash
+    docker-compose up adminer
+    ```
+
+    Access Adminer at `localhost:8080` with credentials from `.env`
+    
+    Use `-d` for detached mode: `docker-compose up adminer -d`.
+
+2) **Run the backend**
+
+    ```bash
+    docker-compose up backend
+    ```
+
+    Finally, Migrate the database
+    ```bash
+    npm run db:dev
+    ```
 
 ## Testing:
-- run the tests
+
+Run the tests
 ```bash
 npm run test
 ```
+
+## Documentation:
+
+Swagger is available at `localhost:3100/api-docs`
 ## TODO:
-- [ ] implement Stripe for payments
-- [ ] set a corn job to simulate the subscription expiration but sending the a magazine monthly depending on the `publication_date`
-- [ ] Swagger (in progress)
+- [ ] Implement Stripe for payments
+- [ ] Set a corn job to simulate the subscription experience buy sending the a magazine monthly depending on the `publication_date`
+- [x] Swagger
 - [ ] Permissions and Grafana for monitoring
+- [ ] Email notifications

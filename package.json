@@ -1,7 +1,7 @@
 {
   "name": "magazine-hub-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "A Magazine Subscription Management System",
   "main": "index.ts",
   "scripts": {
     "dev": "nodemon index.ts",
@@ -12,15 +12,22 @@
     "db:init:test": "cross-env NODE_ENV=test TEST_DB_HOSTNAME=127.0.0.1 sequelize db:drop && cross-env NODE_ENV=test TEST_DB_HOSTNAME=127.0.0.1 sequelize db:create",
     "db:migrate:test": "cross-env NODE_ENV=test TEST_DB_HOSTNAME=127.0.0.1 sequelize db:migrate",
     "db:test": "npm run db:init:test && npm run db:migrate:test",
-    "migrate": "TEST_DB_HOSTNAME=127.0.0.1 sequelize db:migrate",
     "pretest": "npm run db:test",
     "test": "NODE_ENV=test jest --verbose --detectOpenHandles",
     "test:dev": "npm run pretest && cross-env NODE_ENV=test jest --watchAll --verbose --detectOpenHandles",
-    "initTest": "ts-jest config:init"
+    "test:init": "ts-jest config:init"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BekYahia/magazine-hub-backend.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "BekYahia",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BekYahia/magazine-hub-backend/issues"
+  },
+  "homepage": "https://github.com/BekYahia/magazine-hub-backend#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.3.1",
