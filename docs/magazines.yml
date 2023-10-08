@@ -1,0 +1,235 @@
+openapi: 3.0.3
+info:
+  title: Magazine Subscriptions API
+  version: 1.0.0
+  description: API for managing magazines
+tags:
+  - name: Magazines
+    description: Magazine management
+components:
+  schemas:
+    Magazine:
+      type: object
+      properties:
+        id:
+          type: number
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        publication_date:
+          type: string
+          format: date
+        is_active:
+          type: boolean
+          default: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - title
+        - description
+        - price
+        - publication_date
+        - is_active
+      example:
+        id: 123
+        title: National Geographic
+        description: National Geographic is the official magazine of the National Geographic Society. It has been published continuously since its first issue in 1888, nine months after the Society itself was founded.
+        price: 12.99
+        publication_date: 2021-10-01
+        is_active: true
+        createdAt: 2023-10-01T00:00:00.000Z
+        updatedAt: 2023-10-01T00:00:00.000Z
+    MagazineCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        publication_date:
+          type: string
+          format: date
+        is_active:
+          type: boolean
+          default: true
+      required:
+        - title
+        - description
+        - price
+        - publication_date
+      example:
+        title: National Geographic
+        description: National Geographic is the official magazine of the National Geographic Society. It has been published continuously since its first issue in 1888, nine months after the Society itself was founded.
+        price: 12.99
+        publication_date: 2021-10-01
+        is_active: true
+    MagazineUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        publication_date:
+          type: string
+          format: date
+        is_active:
+          type: boolean
+          default: true
+      example:
+        title: National Geographic
+        description: National Geographic is the official magazine of the National Geographic Society. It has been published continuously since its first issue in 1888, nine months after the Society itself was founded.
+        price: 12.99
+        publication_date: 2021-10-01
+        is_active: true
+    MagazineSoftDelete:
+      type: object
+      properties:
+        id:
+          type: number
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        publication_date:
+          type: string
+          format: date
+        is_active:
+          type: boolean
+          default: true
+        deletedAt:
+          type: string
+          format: date-time
+      example:
+        id: 123
+        title: National Geographic
+        description: National Geographic is the official magazine of the National Geographic Society. It has been published continuously since its first issue in 1888, nine months after the Society itself was founded.
+        price: 12.99
+        publication_date: 2021-10-01
+        is_active: false
+        deletedAt: 2023-10-01T00:00:00.000Z
+paths:
+  /magazines:
+    post:
+      summary: Create a new magazine
+      tags: [Magazines]
+      security:
+        - AuthToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MagazineCreate'
+      responses:
+        '201':
+          description: Magazine created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Magazine'
+        '400':
+          description: Title already used been used
+    get:
+      summary: Get all magazines
+      tags: [Magazines]
+      security:
+        - AuthToken: []
+      responses:
+        '200':
+          description: List of magazines
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Magazine'
+  /magazines/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: number
+        description: Magazine ID
+    get:
+      summary: Get a magazine by ID
+      tags: [Magazines]
+      security:
+        - AuthToken: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Magazine'
+        '404':
+          description: No magazine found
+    put:
+      summary: Update a magazine by ID
+      tags: [Magazines]
+      security:
+        - AuthToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MagazineUpdate'
+      responses:
+        '200':
+          description: Magazine updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Magazine'
+        '400':
+          description: Title already been used!
+        '404':
+          description: No magazine found
+    delete:
+      summary: Soft delete a magazine by ID
+      tags: [Magazines]
+      security:
+        - AuthToken: []
+      responses:
+        '200':
+          description: Magazine soft deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MagazineSoftDelete'
+        '404':
+          description: No magazine found
+  /magazines/{id}/perm-delete:
+    delete:
+      summary: Permanently delete a magazine by ID
+      tags: [Magazines]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+          description: Magazine ID
+      security:
+        - AuthToken: []
+      responses:
+        '204':
+          description: Magazine permanently deleted successfully
+        '404':
+          description: No magazine found

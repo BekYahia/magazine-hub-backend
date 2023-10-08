@@ -10,6 +10,7 @@ route.get('/', MagazineController.all)
 route.post('/', validate.create, MagazineController.create)
 route.get('/:id', validate.id, MagazineController.byId)
 route.put('/:id', validate.update, MagazineController.update)
+route.delete('/:id/perm-delete', validate.id, MagazineController.permanentlyDelete)
 route.delete('/:id', validate.id, MagazineController.softDelete)
 
 export = route

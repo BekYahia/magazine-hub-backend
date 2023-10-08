@@ -11,6 +11,7 @@ export default {
 
     async byId(req: Request, res: Response) {
 		const magazine = await Magazine.findByPk(req.params.id)
+		if(!magazine) return res.status(404).json('No magazine found')
 		res.send(magazine)
     },
 	
@@ -21,7 +22,7 @@ export default {
 
 		//save
 		const magazine = await Magazine.create(req.body)
-		res.send(magazine)
+		res.status(201).send(magazine)
     },
 
    async update(req: any, res: Response) {
@@ -43,7 +44,7 @@ export default {
 		//update
 		let magazine = await Magazine.update(req.body, {
 			where: { id: req.params.id },
-			individualHooks: true
+			individualHooks: true,
 		})
 		//TODO: fix - the return type should be [count, [rows]], i'll check sequelize docs later, sorry ts :)
 		//@ts-ignore
@@ -56,12 +57,15 @@ export default {
 			individualHooks: true
 		})
 		//@ts-ignore
-        res.send(del[1][0])
+		if(!del[1][0]) return res.status(404).json('No magazine found')
+		//@ts-ignore
+		res.send(del[1][0])
 	},
 
-	async delete(req: Request, res: Response) {
+	async permanentlyDelete(req: Request, res: Response) {
 		const del = await Magazine.destroy({ where: { id: req.params.id } })
-		res.send({ del })
+		if(!del) return res.status(404).json('No magazine found')
+		res.status(204).send({ del })
 	},
-
+	
 }

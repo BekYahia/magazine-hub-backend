@@ -38,7 +38,7 @@ describe('Magazines API', () => {
 		it('create new magazine', async () => {
 			const res = await request(app).post('/api/magazines').send(magazine).set('x-auth-token', token)
 
-			expect(res.status).toBe(200)
+			expect(res.status).toBe(201)
 			expect(res.body.title).toBe(magazine.title)
 		})
 
@@ -72,7 +72,8 @@ describe('Magazines API', () => {
 	describe('GET /api/magazines/:id', () => {
 
 		it('get magazine', async () => {
-			const res = await request(app).post('/api/magazines').send(magazine).set('x-auth-token', token)
+			const mag = await request(app).post('/api/magazines').send(magazine).set('x-auth-token', token)
+			const res = await request(app).get(`/api/magazines/${mag.body.id}`).set('x-auth-token', token)
 
 			expect(res.status).toBe(200)
 			expect(res.body.title).toBe(magazine.title)
@@ -150,6 +151,13 @@ describe('Magazines API', () => {
 
 			expect(res.status).toBe(200)
 			expect(res.body.is_active).toBe(false)
+		})
+
+		it('permanently delete magazine', async () => {
+			const mag = await request(app).post('/api/magazines').send(magazine).set('x-auth-token', token)
+			const res = await request(app).delete(`/api/magazines/${mag.body.id}/perm-delete`).set('x-auth-token', token)
+
+			expect(res.status).toBe(204)
 		})
 
 		it('should\'t delete magazine, invalid id', async () => {

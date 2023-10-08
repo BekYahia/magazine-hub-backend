@@ -178,18 +178,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
   /users/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: number
+        description: User ID
     get:
       summary: Get a user by ID
       tags: [Users]
       security:
         - AuthToken: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-          description: User ID
       responses:
         '200':
           description: User found
@@ -204,13 +204,6 @@ paths:
       tags: [Users]
       security:
         - AuthToken: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-          description: User ID
       requestBody:
         required: true
         content:
@@ -233,13 +226,6 @@ paths:
       tags: [Users]
       security:
         - AuthToken: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-          description: User ID
       responses:
         '204':
           description: User deleted successfully
