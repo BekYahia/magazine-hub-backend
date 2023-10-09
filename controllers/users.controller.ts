@@ -73,4 +73,9 @@ export default {
 		res.status(204).send({ del })
 	},
 
+	//a dummy method to test the admin middleware
+	async secretArea(req: Request, res: Response) {
+		res.json('Welcome to the secret area!')
+	},
+
 }
