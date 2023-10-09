@@ -3,7 +3,6 @@ import winston from 'winston'
 import RequestValidator from './validations'
 import jwt from 'jsonwebtoken'
 import config from '../config'
-import { func } from 'joi'
 
 export function error(err: any, _req: Request, res: Response, _next: NextFunction) {
 	winston.error(err.message, err)

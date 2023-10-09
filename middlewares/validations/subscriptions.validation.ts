@@ -19,8 +19,8 @@ export = {
 		const schema = Joi.object({
 			UserId: Joi.number().required(),
 			MagazineId: Joi.number().required(),
-			start_date: Joi.date().required(),
-			end_date: Joi.date().required(),
+			start_date: Joi.date(),
+			end_date: Joi.date()
             // is_active: Joi.boolean().required(),
             // payment_status: Joi.string().trim(),
 		})
@@ -35,8 +35,8 @@ export = {
         
 		const schema = Joi.object({
             id: Joi.number().required(),
-			start_date: Joi.date(),
-			end_date: Joi.date(),
+			// start_date: Joi.date(),
+			// end_date: Joi.date(),
             is_active: Joi.boolean(),
 		})
 
@@ -68,7 +68,7 @@ export = {
 			start_date: Joi.date(),
 			end_date: Joi.date(),
             is_active: Joi.boolean(),
-            payment_status: Joi.string().trim(),
+            payment_status: Joi.string().valid('pending', 'succeeded', 'failed').trim(),
 		})
 
 		const { error } = schema.validate(req.query, { abortEarly: false })

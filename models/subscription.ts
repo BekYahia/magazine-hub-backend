@@ -44,7 +44,7 @@ Subscription.init (
             defaultValue: false,
         },
         payment_status: {
-            type: DataTypes.STRING,
+            type: DataTypes.ENUM('pending', 'succeeded', 'failed'),
             defaultValue: 'pending',
         },
 	},

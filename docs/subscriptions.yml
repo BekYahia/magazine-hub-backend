@@ -20,6 +20,10 @@ components:
         payment_status:
           type: string
           default: pending
+          enum:
+            - pending
+            - succeeded
+            - failed
         is_active:
           type: boolean
           default: false
@@ -177,6 +181,10 @@ paths:
           name: payment_status
           schema:
             type: string
+            enum:
+              - pending
+              - succeeded
+              - failed
           description: Filter by payment_status
         - in: query
           name: is_active

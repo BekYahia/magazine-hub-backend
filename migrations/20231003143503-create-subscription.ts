@@ -24,7 +24,7 @@ module.exports = {
 				}
 			},
 			payment_status:  {
-				type: Sequelize.STRING(15)
+				type: Sequelize.ENUM('pending', 'succeeded', 'failed'),
 			},
 			start_date: {
 				type: Sequelize.DATE

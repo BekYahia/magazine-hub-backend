@@ -67,5 +67,5 @@ Swagger is available at `localhost:3100/api-docs`
 - [ ] Implement Stripe for payments
 - [ ] Set a corn job to simulate the subscription experience buy sending the a magazine monthly depending on the `publication_date`
 - [x] Swagger
-- [ ] Permissions and Grafana for monitoring
+- [ ] Prometheus and Grafana for monitoring
 - [ ] Email notifications

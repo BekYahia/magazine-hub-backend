@@ -394,7 +394,13 @@ describe("Subscriptions API", () => {
 				})
 				.set("x-auth-token", token);
 
-			//cancel subscription
+			//cancel subscription first, to satisfy the condition
+			await request(app)
+				.post(`/api/subscriptions/cancel`)
+				.send({ UserId: usr.body.id, MagazineId: mag.body.id })
+				.set("x-auth-token", token);
+
+			//try to cancel subscription
 			const res = await request(app)
 				.post(`/api/subscriptions/cancel`)
 				.send({ UserId: usr.body.id, MagazineId: mag.body.id })
