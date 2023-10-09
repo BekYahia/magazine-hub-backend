@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import Subscription from '../models/subscription'
 import User from '../models/user'
 import Magazine from '../models/magazine'
+import { eventEmitter } from '..'
+import config from '../config';
 
 export default {
 
@@ -48,12 +50,23 @@ export default {
         })
         if (isSubscription) return res.status(400).json('You already have an active subscription for this magazine')
 
+        /**
+         * In a real world scenario, use stripe or any other payment gateway to process the payment
+         * and update the subscription status accordingly
+        */
+        //Simulate payment, then update
+        req.body.payment_status = 'succeeded'
+        req.body.is_active = true
+        req.body.start_date = new Date()
+        req.body.end_date = new Date(new Date().setMonth(new Date().getMonth() + 1))
+        //end simulation
+
         //save
         const subscription = await Subscription.create(req.body)
-
-        //payment with stripe
-        //- success? update {payment_status: 'paid', is_active: true}
-        //- notify user via email
+        
+        //email the user
+        if(config.node_env !== 'test')
+            eventEmitter.emit('notifications:subscription_created', subscription)
 
         res.status(201).send(subscription)
     },
