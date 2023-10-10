@@ -3,7 +3,6 @@ import Subscription from '../models/subscription'
 import User from '../models/user'
 import Magazine from '../models/magazine'
 import { eventEmitter } from '..'
-import config from '../config';
 
 export default {
 
@@ -65,8 +64,7 @@ export default {
         const subscription = await Subscription.create(req.body)
         
         //email the user
-        if(config.node_env !== 'test')
-            eventEmitter.emit('notifications:subscription_created', subscription)
+        eventEmitter.emit('notifications:subscription_created', subscription)
 
         res.status(201).send(subscription)
     },

@@ -79,6 +79,13 @@ describe('Magazines API', () => {
 			expect(res.body.title).toBe(magazine.title)
 		})
 
+		it('should\'t get magazine, no magazine with this id', async () => {
+			const random = Math.floor(Math.random() * 10000)
+			const res = await request(app).get(`/api/magazines/${random}`).set('x-auth-token', token)
+			expect(res.status).toBe(404)
+			expect(res.body).toBe('No magazine found')
+		})
+
 		it('should\'t get magazine, invalid id', async () => {
 			const res = await request(app).get('/api/magazines/m4').set('x-auth-token', token)
 			expect(res.status).toBe(400)
@@ -153,11 +160,29 @@ describe('Magazines API', () => {
 			expect(res.body.is_active).toBe(false)
 		})
 
+		it('Shouldn\'t soft delete magazine - no magazine with this id', async () => {
+			const random = Math.floor(Math.random() * 10000)
+			const mag = await request(app).post('/api/magazines').send(magazine).set('x-auth-token', token)
+			const res = await request(app).delete(`/api/magazines/${random}`).set('x-auth-token', token)
+
+			expect(res.status).toBe(404)
+			expect(res.body).toBe('No magazine found')
+		})
+
 		it('permanently delete magazine', async () => {
 			const mag = await request(app).post('/api/magazines').send(magazine).set('x-auth-token', token)
 			const res = await request(app).delete(`/api/magazines/${mag.body.id}/perm-delete`).set('x-auth-token', token)
 
 			expect(res.status).toBe(204)
+		})
+
+		it('Shouldn\'t permanently delete magazine - no magazine with this id', async () => {
+			const random = Math.floor(Math.random() * 10000)
+			const mag = await request(app).post('/api/magazines').send(magazine).set('x-auth-token', token)
+			const res = await request(app).delete(`/api/magazines/${random}/perm-delete`).set('x-auth-token', token)
+
+			expect(res.status).toBe(404)
+			expect(res.body).toBe('No magazine found')
 		})
 
 		it('should\'t delete magazine, invalid id', async () => {

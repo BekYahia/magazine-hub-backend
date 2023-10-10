@@ -7,8 +7,6 @@ import { closeServer } from "../app/server";
 
 describe("Subscriptions API", () => {
 	let token = "";
-	let userId = 0;
-	let magazineId = 0;
 
 	const user = {
 		name: "John Doe",
@@ -244,6 +242,57 @@ describe("Subscriptions API", () => {
 			expect(Array.isArray(res.body)).toBe(true);
 			expect(res.body.length).toBe(1);
 		});
+
+		it("Get all subscriptions - using filters (ex. where is_active = true)", async () => {
+			const random = Math.floor(Math.random() * 10000);
+
+			//create user
+			const usr = await request(app)
+				.post("/api/users")
+				.send({
+					...user,
+					email: `j@doe${random}.com`,
+				});
+
+			//create magazine
+			const mag = await request(app)
+				.post("/api/magazines")
+				.send({
+					...magazine,
+					title: `Magazine ${random}`,
+				})
+				.set("x-auth-token", token);
+
+			//create subscription
+			const sub = await request(app)
+				.post("/api/subscriptions")
+				.send({
+					UserId: usr.body.id,
+					MagazineId: mag.body.id,
+					start_date: new Date(),
+					end_date: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+				})
+				.set("x-auth-token", token);
+
+			const res = await request(app)
+				.get("/api/subscriptions")
+				.query({ is_active: true })
+				.set("x-auth-token", token);
+
+			expect(res.status).toBe(200);
+			expect(Array.isArray(res.body)).toBe(true);
+			expect(res.body.length).toBe(1);
+		});
+
+		it("Get all subscriptions - using invalid filters (ex. is_active = 'IamFilter')", async () => {
+			const res = await request(app)
+				.get("/api/subscriptions")
+				.query({ is_active: 'Hi' })
+				.set("x-auth-token", token);
+
+			expect(res.status).toBe(400);
+			expect(res.body._original).toBeTruthy();
+		});
 	});
 
 	describe("GET /api/subscriptions/:id", () => {
@@ -307,6 +356,131 @@ describe("Subscriptions API", () => {
 		});
 	});
 
+	describe('PUT /api/subscriptions/:id', () => {
+
+		it('Should cancel subscription via update - (Deprecated, use /api/subscriptions/cancel)', async () => {
+			const random = Math.floor(Math.random() * 10000);
+
+			//create user
+			const usr = await request(app)
+				.post("/api/users")
+				.send({
+					...user,
+					email: `j@doe${random}.com`,
+				});
+
+			//create magazine
+			const mag = await request(app)
+				.post("/api/magazines")
+				.send({
+					...magazine,
+					title: `Magazine ${random}`,
+				})
+				.set("x-auth-token", token);
+
+			//create subscription
+			const sub = await request(app)
+				.post("/api/subscriptions")
+				.send({
+					UserId: usr.body.id,
+					MagazineId: mag.body.id,
+					start_date: new Date(),
+					end_date: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+				})
+				.set("x-auth-token", token);
+
+			//cancel subscription
+			const res = await request(app)
+				.put(`/api/subscriptions/${sub.body.id}`)
+				.send({ is_active: false })
+				.set("x-auth-token", token);
+			
+			expect(res.status).toBe(200);
+			expect(res.body.is_active).toBe(false);
+		})
+
+		it('Shouldn\'t cancel subscription via update - invalid props (is_active si boolean)', async () => {
+			const random = Math.floor(Math.random() * 10000);
+
+			//create user
+			const usr = await request(app)
+				.post("/api/users")
+				.send({
+					...user,
+					email: `j@doe${random}.com`,
+				});
+
+			//create magazine
+			const mag = await request(app)
+				.post("/api/magazines")
+				.send({
+					...magazine,
+					title: `Magazine ${random}`,
+				})
+				.set("x-auth-token", token);
+
+			//create subscription
+			const sub = await request(app)
+				.post("/api/subscriptions")
+				.send({
+					UserId: usr.body.id,
+					MagazineId: mag.body.id,
+					start_date: new Date(),
+					end_date: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+				})
+				.set("x-auth-token", token);
+
+			//cancel subscription
+			const res = await request(app)
+				.put(`/api/subscriptions/${sub.body.id}`)
+				.send({ is_active: 'waa, surprise' })
+				.set("x-auth-token", token);
+			
+			expect(res.status).toBe(400);
+			expect(res.body._original).toBeTruthy();
+		})
+
+		it('Shouldn\'t cancel subscription with update - no subscription with this id (Deprecated, use /api/subscriptions/cancel)', async () => {
+			const random = Math.floor(Math.random() * 10000);
+
+			//create user
+			const usr = await request(app)
+				.post("/api/users")
+				.send({
+					...user,
+					email: `j@doe${random}.com`,
+				});
+
+			//create magazine
+			const mag = await request(app)
+				.post("/api/magazines")
+				.send({
+					...magazine,
+					title: `Magazine ${random}`,
+				})
+				.set("x-auth-token", token);
+
+			//create subscription
+			const sub = await request(app)
+				.post("/api/subscriptions")
+				.send({
+					UserId: usr.body.id,
+					MagazineId: mag.body.id,
+					start_date: new Date(),
+					end_date: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+				})
+				.set("x-auth-token", token);
+
+			//cancel subscription
+			const res = await request(app)
+				.put(`/api/subscriptions/${random}`)
+				.send({ is_active: false })
+				.set("x-auth-token", token);
+
+			expect(res.status).toBe(404);
+		})
+	});
+
 	describe("POST /api/subscriptions/cancel", () => {
 		it("Should cancel subscription", async () => {
 			const random = Math.floor(Math.random() * 10000);
@@ -339,30 +513,27 @@ describe("Subscriptions API", () => {
 				})
 				.set("x-auth-token", token);
 
-			//activate subscription
-			const activate = await request(app)
-				.put(`/api/subscriptions/${sub.body.id}`)
-				.send({ is_active: true })
-				.set("x-auth-token", token);
-
 			//cancel subscription
 			const res = await request(app)
 				.post(`/api/subscriptions/cancel`)
 				.send({ UserId: usr.body.id, MagazineId: mag.body.id })
 				.set("x-auth-token", token);
 
-			expect(activate.body.is_active).toBe(true); //First, it's been activated
-			expect(res.body.is_active).toBe(false); //Then, canceled
+			expect(res.body.is_active).toBe(false);
 		});
 
-		// it('shouldn\'t cancel subscription, no subscription with this ID', async () => {
-		// 	const sub = await request(app).post('/api/subscriptions').send(subscription)
-		// 	const res = await request(app).post('/api/subscriptions/cancel').send({ is_active: false }).set('x-auth-token', token)
+		it("Shouldn\'t cancel subscription - invalid User/Magazine id", async () => {
+			//cancel subscription
 
-		// 	expect(res.status).toBe(404)
-		// 	expect(res.body).toBe('No subscription found')
-		// })
+			const res = await request(app)
+				.post(`/api/subscriptions/cancel`)
+				.send({ UserId: 'a1', MagazineId: 'a3' })
+				.set("x-auth-token", token);
 
+			expect(res.status).toBe(400);
+			expect(res.body._original).toBeTruthy();
+		});
+		
 		it("Shouldn't cancel subscription - no active subscription to be canceled", async () => {
 			const random = Math.floor(Math.random() * 10000);
 

@@ -163,17 +163,25 @@ describe('Users', () => {
 
 	describe('DELETE /api/users/:id', () => {
 
-		it('delete user', async () => {
+		it('Delete the user', async () => {
 			const usr = await request(app).post('/api/users').send(user)
 			const res = await request(app).delete(`/api/users/${usr.body.id}`).set('x-auth-token', token)
 
 			expect(res.status).toBe(204)
 		})
 
-		it('should\'t delete user, invalid id', async () => {
+		it('Should\'t delete user - invalid id', async () => {
 			const res = await request(app).delete('/api/users/a4').set('x-auth-token', token)
 			expect(res.status).toBe(400)
 			expect(res.body._original.id).toBe('a4')
+		})
+
+		it('Should\'t delete user - no user with this id', async () => {
+			const random = Math.floor(Math.random() * 100000)
+			const res = await request(app).delete(`/api/users/${random}`).set('x-auth-token', token)
+
+			expect(res.status).toBe(404)
+			expect(res.body).toBe('No user found')
 		})
 	})
 

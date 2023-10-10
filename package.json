@@ -14,7 +14,7 @@
     "db:test": "npm run db:init:test && npm run db:migrate:test",
     "pretest": "npm run db:test",
     "test": "NODE_ENV=test jest --verbose --detectOpenHandles",
-    "test:dev": "npm run pretest && cross-env NODE_ENV=test jest --watchAll --verbose --detectOpenHandles",
+    "test:dev": "npm run pretest && cross-env NODE_ENV=test jest --watchAll --verbose --coverage --detectOpenHandles",
     "test:init": "ts-jest config:init"
   },
   "repository": {
