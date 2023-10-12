@@ -4,10 +4,11 @@ import { app } from '..'
 import users from '../routes/users.route'
 import magazines from '../routes/magazines.route'
 import subscriptions from '../routes/subscriptions.route'
-import { error } from '../middlewares'
+import { error, helmet } from '../middlewares'
 
 export function router(): void {
 
+	app.use(helmet)
 	app.use(urlencoded({ extended: true }))
 	app.use(json())
 
