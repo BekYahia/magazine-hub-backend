@@ -4,3 +4,4 @@ logger.log
 dist
 TODO.MD
 coverage/
+rate-limit.log

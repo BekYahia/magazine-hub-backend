@@ -31,3 +31,16 @@ export function logging(): void {
 	// Handle unhandledRejection
 	process.on("unhandledRejection", rej => { throw rej })
 }
+
+export const rateLimitLogger = winston.createLogger({
+	level: 'info',
+	format: winston.format.combine(
+		winston.format.printf(({ message }) => JSON.stringify({ ...message }))
+	),
+	transports: [
+		new winston.transports.File({
+			filename: 'rate-limit.log',
+			level: 'info',
+		}),
+	],
+});

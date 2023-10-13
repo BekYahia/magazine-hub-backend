@@ -4,13 +4,14 @@ import { app } from '..'
 import users from '../routes/users.route'
 import magazines from '../routes/magazines.route'
 import subscriptions from '../routes/subscriptions.route'
-import { error, helmet } from '../middlewares'
+import { error, helmet, limiter } from '../middlewares'
 
 export function router(): void {
 
 	app.use(helmet)
 	app.use(urlencoded({ extended: true }))
 	app.use(json())
+	app.use('/api', limiter)
 
 	app.use('/api/users', users)
 	app.use('/api/magazines', magazines)

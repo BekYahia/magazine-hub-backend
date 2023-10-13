@@ -4,6 +4,8 @@ import RequestValidator from './validations'
 import jwt from 'jsonwebtoken'
 import config from '../config'
 import { app } from '..'
+import { rateLimit } from 'express-rate-limit'
+import { rateLimitLogger } from '../app'
 
 export function error(err: any, _req: Request, res: Response, _next: NextFunction) {
 	winston.error(err.message, err)
@@ -28,6 +30,9 @@ export function admin(req: any, res: Response, next: NextFunction) {
 	next()
 }
 
+/**
+ * Helmet middleware to enhance security
+ */
 export function helmet(req: Request, res: Response, next: NextFunction) {
 	const HEADERS = {
 		"Content-Security-Policy":
@@ -48,5 +53,30 @@ export function helmet(req: Request, res: Response, next: NextFunction) {
 	app.disable('x-powered-by')
 	next()
 }
+
+/**
+ * Rate limit middleware
+ * @description 100 requests per 5 minutes
+ */
+export const limiter = rateLimit({
+	windowMs: 5 * 60 * 1000,
+	limit: config.node_env === 'test' ? 2000 : 100,
+	standardHeaders: 'draft-7',
+	legacyHeaders: false,
+	handler: (req: Request, res: Response) => {
+
+		// Log the blocked requests
+		rateLimitLogger.info({			
+			time: new Date().toISOString(),
+			ip: req.ip,
+			url: `${req.method}: ${req.url}`,
+		})
+
+		res.status(429).json({
+			error: true,
+			message: 'Too many requests, please try again later.',
+		});
+	},
+});
 
 export {RequestValidator}
