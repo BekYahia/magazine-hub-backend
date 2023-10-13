@@ -2,6 +2,8 @@ import User from '../models/user'
 import request from 'supertest'
 import { app } from '..'
 import { closeServer } from '../app/server'
+import { Request, Response, NextFunction } from 'express';
+import { error } from '../middlewares';
 
 describe('Middlewares', () => {
     const user = {
@@ -13,6 +15,27 @@ describe('Middlewares', () => {
     afterEach(async () => {
         await User.destroy({ where: {} })
         closeServer()
+    });
+
+    describe('Error ', () => {
+        it('Should return 500 if an error occurs', async () => {
+            const mockRequest = {} as Request
+            const mockNext = {} as NextFunction
+            const mockResponse = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn().mockReturnThis(),
+                end: jest.fn().mockReturnThis(),
+            } as unknown as Response
+        
+            // Create a test error
+            const testError = new Error('Test error')
+        
+            // Call the error function
+            error(testError, mockRequest, mockResponse, mockNext)
+            expect(mockResponse.status).toHaveBeenCalledWith(500)
+            expect(mockResponse.json).toHaveBeenCalledWith('Sorry, Something went wrong!')
+            expect(mockResponse.end).toHaveBeenCalled()
+        });
     });
 
     describe('Auth ', () => {
