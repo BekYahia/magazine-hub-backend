@@ -36,7 +36,7 @@
     "express-rate-limit": "^7.1.1",
     "joi": "^17.10.2",
     "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.9.4",
+    "mysql2": "^3.9.7",
     "sequelize": "^6.33.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
